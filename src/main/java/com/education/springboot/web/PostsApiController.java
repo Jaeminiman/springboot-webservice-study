@@ -1,7 +1,7 @@
 package com.education.springboot.web;
 
 import com.education.springboot.service.posts.PostsService;
-import com.education.springboot.web.dto.PostsResponseRequestDto;
+import com.education.springboot.web.dto.PostsResponseDto;
 import com.education.springboot.web.dto.PostsSaveRequestDto;
 import com.education.springboot.web.dto.PostsUpdateRequestDto;
 import lombok.RequiredArgsConstructor;
@@ -22,7 +22,13 @@ public class PostsApiController {
         return postsService.update(id,requestDto);
     }
     @GetMapping("/api/v1/posts/{id}")
-    public PostsResponseRequestDto findById(@PathVariable Long id){
+    public PostsResponseDto findById(@PathVariable Long id){
         return postsService.findById(id);
+    }
+
+    @DeleteMapping("/api/v1/posts/{id}")
+    public Long delete(@PathVariable Long id){
+        postsService.delete(id);
+        return id;
     }
 }
