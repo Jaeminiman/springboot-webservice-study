@@ -1,5 +1,7 @@
 package com.education.springboot.config.auth;
 
+import com.education.springboot.config.auth.dto.OAuthAttributes;
+import com.education.springboot.config.auth.dto.SessionUser;
 import com.education.springboot.domain.user.User;
 import com.education.springboot.domain.user.UserRepository;
 import lombok.RequiredArgsConstructor;
@@ -26,6 +28,8 @@ public class CustomOAuth2UserService implements OAuth2UserService<OAuth2UserRequ
     public OAuth2User loadUser(OAuth2UserRequest userRequest) throws OAuth2AuthenticationException {
         OAuth2UserService<OAuth2UserRequest, OAuth2User> delegate =
                 new DefaultOAuth2UserService();
+        OAuth2User oAuth2User = delegate.loadUser(userRequest);
+
         String registrationId = userRequest.getClientRegistration().getRegistrationId();
         String userNameAttributeName = userRequest.getClientRegistration().getProviderDetails()
                 .getUserInfoEndpoint().getUserNameAttributeName();
@@ -34,7 +38,7 @@ public class CustomOAuth2UserService implements OAuth2UserService<OAuth2UserRequ
                 oAuth2User.getAttributes());
         User user = saveOrUpdate(attributes);
         httpSession.setAttribute("user", new SessionUser(user));
-        return new DefaultOAuth2User(Collections.sigleton(new
+        return new DefaultOAuth2User(Collections.singleton(new
                 SimpleGrantedAuthority(user.getRoleKey())),
                 attributes.getAttributes(),
                 attributes.getNameAttributeKey());
@@ -47,6 +51,4 @@ public class CustomOAuth2UserService implements OAuth2UserService<OAuth2UserRequ
 
         return userRepository.save(user);
     }
-
-    @Override
 }
